@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace DIS_Assignment_2_Fall_2021
 {
@@ -17,7 +18,7 @@ namespace DIS_Assignment_2_Fall_2021
 
             //Question 2:
             Console.WriteLine("Question 2:");
-            int[] nums = { 0, 1, 0, 3, 12 };
+            int[] nums = { 1, 3, 5, 6 };
             Console.WriteLine("Enter the target number:");
             int target = Int32.Parse(Console.ReadLine());
             int pos = SearchInsert(nums, target);
@@ -40,9 +41,9 @@ namespace DIS_Assignment_2_Fall_2021
             int[] arr1 = { 1, 2, 2, 1, 1, 3 };
             bool unq = UniqueOccurrences(arr1);
             if (unq)
-                Console.WriteLine("Number of Occurences of each element are same");
+                Console.WriteLine("Number of Occurences of each element are unique");
             else
-                Console.WriteLine("Number of Occurences of each element are not same");
+                Console.WriteLine("Number of Occurences of each element are not unique");
 
             Console.WriteLine();
 
@@ -123,8 +124,17 @@ namespace DIS_Assignment_2_Fall_2021
         {
             try
             {
-                //write your code here.
-                return 0;
+                int currAlt = 0;//current altitude
+                int maxAlt = 0;//maximum altitude
+                for (int i = 0; i < gain.Length; i++)//traversing the gain int array
+                {
+                    currAlt += gain[i];//current altitude gets added by the elements in the gain array
+                    if (currAlt > maxAlt)//if current altitude is greater than max altitude then current altitude will get placed in the max altitude variable 
+                    {
+                        maxAlt = currAlt;
+                    }
+                }
+                return maxAlt;
             }
             catch (Exception)
             {
@@ -159,8 +169,39 @@ namespace DIS_Assignment_2_Fall_2021
         {
             try
             {
-                //Write your Code here.
-                return -1;
+                int start = 0;
+                int end = nums.Length - 1;//we are keeping the end variable as num int array's length minus one
+
+                while (start <= end)//we start binary search here as while loop condition is start index is less than equal to end index
+                {
+                    int mid = (start + end) / 2;//mid is the half way index between the start and end index
+                    if (target == nums[mid])//if target is the mid value of nums int array
+                    {
+                        return mid;
+                    }
+                    else if (target < nums[mid])//if target is less than mid value of nums int array
+                    {
+                        end = mid - 1;//we keep end index as mid index minus 1
+                    }
+                    else
+                    {
+                        start = mid + 1;//start index as mid index increment 1
+                    }
+                }
+                Console.WriteLine(start + " " + end);
+                if (end < 0)//if end index is less than 0
+                {
+                    return 0;
+                }
+                if (nums[end] > target)//if end index num array value is greater than target
+                {
+                    return end;
+                }
+                else
+                {
+                    return start;
+                }
+
             }
             catch (Exception)
             {
@@ -188,9 +229,35 @@ namespace DIS_Assignment_2_Fall_2021
         {
             try
             {
-                List<string> commonwords = new List<string>();
-                //write your code here.
+                List<string> commonwords = new List<string>();//initializing commonwords string list
+                int[,] count = new int[100, 26];//initializing 2D array having 100 rows and 26 columns
+                for (int i = 0; i < words.Length; ++i)//traversing the words in the input
+                {
+                    for (int j = 0; j < words[i].Length; ++j)//traversing the letters in the word
+                    {
+                        char ch = words[i][j];//provides the respective character in the word
+                        // occurence of character in each string
+                        count[i, ch - 97]++;//this gives the count value of character which increments everytime per loop. 97 is the ascii code of 'a'
+                    }
+                }
 
+                for (int i = 0; i < 26; ++i)//traversing through each letter
+                {
+                    int k = int.MaxValue;//providing max value of int to k i.e. k=2147483647
+                    for (int j = 0; j < words.Length; j++)//traversing through the words length
+                    {
+                        if (count[j, i] == 0)//if the count is 0
+                        {
+                            k = -1; // doesn't appear in every string
+                            break;
+                        }
+                        k = Math.Min(k, count[j, i]); // the minimal number of the letter
+                    }
+                    while (k-- > 0)
+                    {
+                        commonwords.Add(char.ToString((char)(97 + i)));//adding each letter which was counted into the commonwords as a whole string
+                    }
+                }
                 return commonwords;
             }
             catch (Exception)
@@ -221,9 +288,26 @@ namespace DIS_Assignment_2_Fall_2021
         {
             try
             {
-                //write your code here.
-                return false;
+                Dictionary<int, int> dict = new Dictionary<int, int>();
+                foreach (int a in arr)//traversing through each term in array arr
+                {
+                    if (dict.ContainsKey(a))//if dictionary dict contains int a
+                        dict[a] += 1;
+                    else
+                        dict[a] = 1;
+                }
+
+
+                foreach (int v in dict.Values)//traversing through the values in dictionary dict
+                {
+                    if (dict.Values.Where(val => val == v).Count() > 1)//if dict values contain the specific v value, then place the value in val and if count is greater than 1
+                        return false;
+                }
+                return true;
             }
+
+
+
             catch (Exception)
             {
 
@@ -232,11 +316,12 @@ namespace DIS_Assignment_2_Fall_2021
 
         }
 
-        /*
+        /*  
         
         Question 5:
 
-        You are given an array items, where each items[i] = [type, color, name]  describes the type, color, and name of the ith item. You are also given a rule represented by two strings, ruleKey and ruleValue.
+        You are given an array items, where each items[i] = [type, color, name]  describes the type, color, and name of the ith item.
+        You are also given a rule represented by two strings, ruleKey and ruleValue.
         The ith item is said to match the rule if one of the following is true:
         •	ruleKey == "type" and ruleValue == type.
         •	ruleKey == "color" and ruleValue == color.
@@ -263,7 +348,39 @@ namespace DIS_Assignment_2_Fall_2021
             try
             {
                 //write your code here.
-                return 0;
+                var counter = 0;
+                if (ruleKey == "type")// if rulekey is type
+                {
+                    for (var i = 0; i < items.Count; i++)//traversing the list items
+                    {
+                        if (items[i][0] == ruleValue)//if item value at row ith, first column equals ruleValue then increase counter
+                        {
+                            counter++;
+                        }
+                    }
+                }
+                if (ruleKey == "color")// if rulekey is color
+                {
+                    for (var i = 0; i < items.Count; i++)//traversing the list items
+                    {
+                        if (items[i][1] == ruleValue)//if item value at row ith, second column equals ruleValue then increase counter
+                        {
+                            counter++;
+                        }
+                    }
+                }
+                if (ruleKey == "name")// if rulekey is color
+                {
+                    for (var i = 0; i < items.Count; i++)//traversing the list items
+                    {
+                        if (items[i][2] == ruleValue)//if item value at row ith, third column equals ruleValue then increase counter
+                        {
+                            counter++;
+                        }
+                    }
+                }
+                return counter;
+
             }
             catch (Exception)
             {
@@ -305,7 +422,30 @@ namespace DIS_Assignment_2_Fall_2021
             try
             {
                 //write your code here.
-                //print the answer in the function itself.
+                int[] array1;
+
+
+                for (int i = 0, j = nums.Length - 1; i < j;)//traversing through two locations of the nums array. from start and end index
+                {
+                    if (nums[i] + nums[j] == target)//if the first index and last index values add up to the target
+                    {
+                        array1 = new int[] { ++i, ++j };//adding the values to new array
+
+                    }
+
+                    else if (nums[i] + nums[j] < target)//if the first index and last index values add up to less than the target
+                    {
+                        i++;
+                    }
+
+                    else
+                    {
+                        j--;
+                    }
+
+                }
+
+
 
             }
             catch (Exception)
@@ -319,7 +459,8 @@ namespace DIS_Assignment_2_Fall_2021
          
         Question 7:
 
-        You are given a string allowed consisting of distinct characters and an array of strings words. A string is consistent if every character in words[i] appears in the string allowed.
+        You are given a string allowed consisting of distinct characters and an array of strings words. A string is consistent if every character in words[i] 
+        appears in the string allowed.
         Return the number of consistent strings in the array words.
 
         Note: The algorithm should have run time complexity of O(n).
@@ -342,7 +483,38 @@ namespace DIS_Assignment_2_Fall_2021
             try
             {
                 //write your code here.
-                return 0;
+                //Used HashSet to store characters from allowed string, Why because fetching character from Hash set is o(1).
+                HashSet<char> allowedCharsSet = new HashSet<char>();
+                foreach (char val in allowed)
+                {
+                    allowedCharsSet.Add(val);
+                }
+
+
+                // count variable is used to count number of consistent strings.
+                // wordPointer variable is used to move to next word in words array.
+                // charPointer variable is used to move to next character in word string.
+                int count = 0, wordPointer = 0, charPointer = 0;
+
+                while (wordPointer < words.Length)
+                {
+                    if (allowedCharsSet.Contains(words[wordPointer][charPointer]))
+                    {
+                        charPointer++;
+                        if (charPointer >= words[wordPointer].Length)
+                        {
+                            charPointer = 0;
+                            count++;
+                            wordPointer++; // going to next word if character from word string is present in allowed string by increasing count value.
+                        }
+                    }
+                    else
+                    {
+                        charPointer = 0;
+                        wordPointer++; // going to next word if character from word string is not present in allowed string by resetting char pointer to 0.
+                    }
+                }
+                return count;
             }
             catch (Exception)
             {
@@ -373,6 +545,15 @@ namespace DIS_Assignment_2_Fall_2021
             {
                 //write your code here.
                 int[] ans = { };
+                Dictionary<int, int> D = new Dictionary<int, int>();
+                for (int i = 0; i < nums2.Length; ++i)//traversing through the nums2 array
+                    D.Add(nums2[i], i);//adding key and value
+
+                ans = new int[nums1.Length];//initializing new int array
+                int t = 0;
+                foreach (int x in nums1)//traversing through nums1 array
+                    ans[t++] = D.GetValueOrDefault(x);//we place the value of D array with respect to the key 'x' to each new position of ans int array
+
                 return ans;
             }
             catch (Exception)
@@ -403,7 +584,23 @@ namespace DIS_Assignment_2_Fall_2021
             try
             {
                 //write your code here.
-                return 0;
+                int sum = 0;
+                int maxSum = arr[0];
+
+                for (int i = 0; i < arr.Length; i++)//traversing through array arr
+                {
+                    sum += arr[i];//adding array values to sum variable
+                    if (arr[i] > sum)//arr[i] value is greater than sum
+                    {
+                        sum = arr[i];//arr[i] value will then be placed in to sum
+                    }
+                    if (sum > maxSum)// sum is greater than maxSum
+                    {
+                        maxSum = sum;//sum will then then be placed in to maxSum 
+                    }
+                }
+                return maxSum;
+
             }
             catch (Exception)
             {
@@ -440,7 +637,19 @@ namespace DIS_Assignment_2_Fall_2021
             try
             {
                 //write your code here.
-                return 0;
+                var minLength = int.MaxValue;//Taking MaxValue of int into minLength
+                var total = 0;
+                for (int start = 0, end = 0; end < arr10.Count(); end++)//traversing through start and end of arr10 array
+                {
+                    total += arr10[end];//adding arr10 end index value to total 
+                    while (total >= target_subarray_sum && start <= end)//while total is greater than or equal to target_subarray_sum and start index is less than or equal to end
+                    {
+                        minLength = Math.Min(minLength, end - start + 1);//returns the smaller one between minLength and (end-start+1) and places into minLength
+                        total -= arr10[start++];//total equals total value minus arr10 value from start index incremented
+                    }
+                }
+                return minLength == int.MaxValue ? 0 : minLength;//this returns the min length of 0 if minLength is equal to MaxValue else will return minLength
+
 
             }
             catch (Exception)
