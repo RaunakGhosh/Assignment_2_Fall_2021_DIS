@@ -422,29 +422,34 @@ namespace DIS_Assignment_2_Fall_2021
             try
             {
                 //write your code here.
-                int[] array1;
+                int[] arr = new int[2];
+                int i = 0, j = nums.Length - 1;
+                int sum;
 
-
-                for (int i = 0, j = nums.Length - 1; i < j;)//traversing through two locations of the nums array. from start and end index
+                if (nums.Length >= 2 && nums.Length <= 3 * 100000) //first check
                 {
-                    if (nums[i] + nums[j] == target)//if the first index and last index values add up to the target
+                    sum = nums[i] + nums[j];
+
+                    if (nums[i] >= -1000 && nums[i] <= 1000)//second check
                     {
-                        array1 = new int[] { ++i, ++j };//adding the values to new array
+                        Array.Sort(nums); //sort  the array
 
-                    }
+                        while (sum != target)
+                        {
+                            if (sum < target)
+                                i++;
+                            else
+                                j--;
 
-                    else if (nums[i] + nums[j] < target)//if the first index and last index values add up to less than the target
-                    {
-                        i++;
-                    }
+                            sum = nums[i] + nums[j];
+                        }
 
-                    else
-                    {
-                        j--;
-                    }
+                        arr[0] = i + 1;
+                        arr[1] = j + 1;
+                        Console.Write("[" + String.Join(",", arr) + "]");
 
-                }
-
+                    } 
+                }  
 
 
             }
@@ -632,20 +637,20 @@ namespace DIS_Assignment_2_Fall_2021
 
         */
 
-        public static int minSubArrayLen(int target_subarray_sum, int[] arr10)
+        public static int minSubArrayLen(int target_subarray_sum, int[] arr)
         {
             try
             {
                 //write your code here.
                 var minLength = int.MaxValue;//Taking MaxValue of int into minLength
                 var total = 0;
-                for (int start = 0, end = 0; end < arr10.Count(); end++)//traversing through start and end of arr10 array
+                for (int start = 0, end = 0; end < arr.Count(); end++)//traversing through start and end of arr10 array
                 {
-                    total += arr10[end];//adding arr10 end index value to total 
+                    total += arr[end];//adding arr10 end index value to total 
                     while (total >= target_subarray_sum && start <= end)//while total is greater than or equal to target_subarray_sum and start index is less than or equal to end
                     {
                         minLength = Math.Min(minLength, end - start + 1);//returns the smaller one between minLength and (end-start+1) and places into minLength
-                        total -= arr10[start++];//total equals total value minus arr10 value from start index incremented
+                        total -= arr[start++];//total equals total value minus arr10 value from start index incremented
                     }
                 }
                 return minLength == int.MaxValue ? 0 : minLength;//this returns the min length of 0 if minLength is equal to MaxValue else will return minLength
