@@ -543,7 +543,7 @@ namespace DIS_Assignment_2_Fall_2021
         Explanation: As mapping[0] = 1 because the 0th element of nums1 appears at nums2[1], and mapping[1] = 4 because the 1st element of nums1 appears at nums2[4], and so on.
 
         */
-
+         
         public static int[] AnagramMappings(int[] nums1, int[] nums2)
         {
             try
